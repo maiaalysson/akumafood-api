@@ -1,7 +1,6 @@
 package com.gabrielmaia.akumafood.api.controller;
 
 import java.util.List;
-//import java.util.Map;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.gabrielmaia.akumafood.domain.exception.EntityNotFound;
 import com.gabrielmaia.akumafood.domain.model.Restaurant;
 import com.gabrielmaia.akumafood.domain.repository.RestaurantRepository;
-import com.gabrielmaia.akumafood.domain.service.MergeServiceUpdate;
 import com.gabrielmaia.akumafood.domain.service.RestaurantServiceRegistration;
+import com.gabrielmaia.akumafood.infrastructure.repository.MergeObjects;
 
 @RestController
 @RequestMapping(value = "/restaurants", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -35,7 +34,7 @@ public class RestaurantController {
 	private RestaurantServiceRegistration restaurantService;
 
 	@Autowired
-	private MergeServiceUpdate merge;
+	private MergeObjects merge;
 
 	@GetMapping
 	public List<Restaurant> all() {
@@ -75,19 +74,6 @@ public class RestaurantController {
 		}
 	}
 
-	/**
-	 * @PatchMapping("/{restaurantsId}") public ResponseEntity<?>
-	 * partialUpdate(@PathVariable Long restaurantsId, @RequestBody Map<String,
-	 * Object> values){ Restaurant newRestaurant =
-	 * restaurantRepository.search(restaurantsId);
-	 * 
-	 * if (newRestaurant == null) return ResponseEntity.notFound().build();
-	 * 
-	 * merge.objects(values, newRestaurant);
-	 * 
-	 * return update(restaurantsId, newRestaurant); }
-	 **/
-
 	@PatchMapping("/{restaurantsId}")
 	public ResponseEntity<?> partialUpdate(@PathVariable Long restaurantsId, @RequestBody Restaurant restaurant) {
 		Restaurant newRestaurant = restaurantRepository.search(restaurantsId);
@@ -110,5 +96,4 @@ public class RestaurantController {
 			return ResponseEntity.notFound().build();
 		}
 	}
-
 }
