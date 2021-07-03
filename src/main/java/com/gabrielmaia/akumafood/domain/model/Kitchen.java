@@ -10,7 +10,6 @@ import javax.persistence.Column;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-//@JsonRootName("gastronomia")
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
@@ -21,8 +20,6 @@ public class Kitchen {
 	@EqualsAndHashCode.Include
 	private Long id;
 	
-	//@JsonIgnore
-	//@JsonProperty("title")
 	@Column(nullable=false)
 	private String name;
 

@@ -14,7 +14,7 @@ import com.gabrielmaia.akumafood.domain.repository.RestaurantRepository;
 public class RestaurantServiceRegistration {
 
 	@Autowired
-	private RestaurantRepository repository;
+	private RestaurantRepository restaurantRepository;
 
 	@Autowired
 	private KitchenRepository kitchenRepository;
@@ -29,13 +29,14 @@ public class RestaurantServiceRegistration {
 
 			restaurant.setKitchen(kitchen);
 		}
-
-		return repository.save(restaurant);
+		
+		return restaurantRepository.save(restaurant);
 	}
 
 	public void remove(Long id) {
 		try {
-			repository.remove(id);
+			restaurantRepository.remove(id);
+			
 		} catch (EmptyResultDataAccessException e) {
 			throw new EntityNotFound(String.format("There is no code Restaurant with this ID: %d", id));
 		} 

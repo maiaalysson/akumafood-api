@@ -15,7 +15,7 @@ import com.gabrielmaia.akumafood.domain.repository.StateRepository;
 public class CityServiceRegistration {
 	
 	@Autowired
-	private CityRepository repository;
+	private CityRepository cityRepository;
 	
 	@Autowired
 	private StateRepository stateRepository;
@@ -28,14 +28,16 @@ public class CityServiceRegistration {
 			throw new EntityNotFound(String.format("This state code: %d, does not exist.", stateId));
 		
 		city.setState(state);
-		return repository.save(city);
+		return cityRepository.save(city);
 	}
 	
 	public void remove(Long id) {
 		try {
-			repository.remove(id);
+			cityRepository.remove(id);
+			
 		} catch (EmptyResultDataAccessException e) {
 			throw new EntityNotFound(String.format("This city code: %d, does not exist.", id));
+		
 		} catch (EntityExceptionInUse e) {
 			throw new EntityExceptionInUse(String.format("The city of the code: %d, "
 					+ "of cannot be removed because it is in use", id));

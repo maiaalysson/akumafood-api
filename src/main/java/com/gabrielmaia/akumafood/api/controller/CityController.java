@@ -27,24 +27,20 @@ import com.gabrielmaia.akumafood.domain.service.CityServiceRegistration;
 public class CityController {
 	
 	@Autowired
-	private CityRepository repository;
+	private CityRepository cityRepository;
 	
 	@Autowired
 	private CityServiceRegistration cityService;
 	
 	@GetMapping
 	public List<City> all(){
-		return repository.all();
+		return cityRepository.all();
 	}
 	
 	@GetMapping("/{citiesId}")
 	public ResponseEntity<City> search(@PathVariable Long citiesId) {
-		City city = repository.search(citiesId);
-		
-		if (city != null)
-			return ResponseEntity.ok(city);
-		
-		return ResponseEntity.notFound().build();
+		City city = cityRepository.search(citiesId);
+		return city != null ? ResponseEntity.ok(city) : ResponseEntity.notFound().build();
 	}
 	
 	@PostMapping
@@ -55,7 +51,7 @@ public class CityController {
 	
 	@PutMapping("/{citiesId}")
 	public ResponseEntity<City> update(@PathVariable Long citiesId, @RequestBody City city){
-		City newCity = repository.search(citiesId);
+		City newCity = cityRepository.search(citiesId);
 		
 		if (newCity != null) {
 			BeanUtils.copyProperties(city, newCity, "id");
