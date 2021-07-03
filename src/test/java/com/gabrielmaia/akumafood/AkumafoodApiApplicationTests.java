@@ -1,9 +1,12 @@
 package com.gabrielmaia.akumafood;
 
-//@SpringBootTest
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
 class AkumafoodApiApplicationTests {
 
-	//@Test
+	@Test
 	void contextLoads() {
 	}
 
