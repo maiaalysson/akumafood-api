@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gabrielmaia.akumafood.domain.exception.EntityExceptionInUse;
@@ -23,7 +23,7 @@ import com.gabrielmaia.akumafood.domain.repository.StateRepository;
 import com.gabrielmaia.akumafood.domain.service.StateServiceRegistration;
 
 @RestController
-@RequestMapping("/states")
+@RequestMapping(value = "/states", produces = MediaType.APPLICATION_JSON_VALUE)
 public class StateController {
 	
 	@Autowired
@@ -48,9 +48,8 @@ public class StateController {
 	}
 	
 	@PostMapping
-	@ResponseStatus(HttpStatus.CREATED)
-	public State add(@RequestBody State state) {
-		return stateService.save(state);
+	public ResponseEntity<State> add(@RequestBody State state) {
+		return ResponseEntity.status(HttpStatus.CREATED).body(stateService.save(state));
 	}
 	
 	@PutMapping("/{stateId}")

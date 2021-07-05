@@ -92,6 +92,7 @@ public class RestaurantController {
 		try {
 			restaurantService.remove(restaurantsId);
 			return ResponseEntity.noContent().build();
+			
 		} catch (EntityNotFound e) {
 			return ResponseEntity.notFound().build();
 		}
