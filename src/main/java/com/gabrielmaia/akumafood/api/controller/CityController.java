@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gabrielmaia.akumafood.domain.exception.EntityExceptionInUse;
@@ -23,7 +23,7 @@ import com.gabrielmaia.akumafood.domain.repository.CityRepository;
 import com.gabrielmaia.akumafood.domain.service.CityServiceRegistration;
 
 @RestController
-@RequestMapping("/cities")
+@RequestMapping(value = "/cities", produces = MediaType.APPLICATION_JSON_VALUE)
 public class CityController {
 	
 	@Autowired
@@ -44,11 +44,15 @@ public class CityController {
 	}
 	
 	@PostMapping
-	@ResponseStatus(HttpStatus.CREATED)
-	public City add(@RequestBody City city){
-		return cityService.save(city);
+	public ResponseEntity<?> add(@RequestBody City city){
+		try {
+			city = cityService.save(city); 
+			return ResponseEntity.status(HttpStatus.CREATED).body(city);
+		} catch (EntityNotFound e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
 	}
-	
+	 
 	@PutMapping("/{citiesId}")
 	public ResponseEntity<City> update(@PathVariable Long citiesId, @RequestBody City city){
 		City newCity = cityRepository.search(citiesId);
