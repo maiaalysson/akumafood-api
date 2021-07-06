@@ -9,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -21,6 +22,7 @@ import com.gabrielmaia.akumafood.domain.exception.EntityNotFound;
 import com.gabrielmaia.akumafood.domain.model.City;
 import com.gabrielmaia.akumafood.domain.repository.CityRepository;
 import com.gabrielmaia.akumafood.domain.service.CityServiceRegistration;
+import com.gabrielmaia.akumafood.infrastructure.repository.MergeObjects;
 
 @RestController
 @RequestMapping(value = "/cities", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -31,6 +33,9 @@ public class CityController {
 	
 	@Autowired
 	private CityServiceRegistration cityService;
+	
+	@Autowired
+	private MergeObjects merge;
 	
 	@GetMapping
 	public List<City> all(){
@@ -59,6 +64,19 @@ public class CityController {
 		
 		if (newCity != null) {
 			BeanUtils.copyProperties(city, newCity, "id");
+			newCity = cityService.save(newCity);
+			return ResponseEntity.ok(newCity);
+		}
+		
+		return ResponseEntity.notFound().build();
+	}
+	
+	@PatchMapping("/{citiesId}")
+	public ResponseEntity<City> partialUpdate(@PathVariable Long citiesId, @RequestBody City city){
+		City newCity = cityRepository.search(citiesId);
+		
+		if(newCity != null) {
+			merge.objects(city, newCity);
 			newCity = cityService.save(newCity);
 			return ResponseEntity.ok(newCity);
 		}
