@@ -75,7 +75,7 @@ public class RestaurantController {
 	}
 
 	@PatchMapping("/{restaurantsId}")
-	public ResponseEntity<?> partialUpdate(@PathVariable Long restaurantsId, @RequestBody Restaurant restaurant) {
+	public ResponseEntity<Restaurant> partialUpdate(@PathVariable Long restaurantsId, @RequestBody Restaurant restaurant) {
 		Restaurant newRestaurant = restaurantRepository.search(restaurantsId);
 
 		if (newRestaurant != null) {
