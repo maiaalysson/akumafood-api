@@ -15,17 +15,16 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 public class City {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@EqualsAndHashCode.Include	
+	@EqualsAndHashCode.Include
 	private Long id;
-	
+
 	@Column(nullable = false)
 	private String name;
-	
+
 	@ManyToOne
 	@JoinColumn(nullable = false)
 	private State state;
 }
- 

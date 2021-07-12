@@ -21,13 +21,13 @@ public class Restaurant {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@EqualsAndHashCode.Include
 	private Long id;
-	
+
 	@Column(nullable = false)
 	private String name;
 
 	@Column(name = "shipping_fee", nullable = false)
 	private BigDecimal shippingFee;
-	
+
 	@ManyToOne
 	private Kitchen kitchen;
 }

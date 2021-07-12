@@ -20,10 +20,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.gabrielmaia.akumafood.domain.exception.EntityExceptionInUse;
 import com.gabrielmaia.akumafood.domain.exception.EntityNotFound;
+import com.gabrielmaia.akumafood.domain.functions.MergeObjects;
 import com.gabrielmaia.akumafood.domain.model.Kitchen;
 import com.gabrielmaia.akumafood.domain.repository.KitchenRepository;
 import com.gabrielmaia.akumafood.domain.service.KitchenServiceRegistration;
-import com.gabrielmaia.akumafood.infrastructure.repository.MergeObjects;
 
 @RestController
 @RequestMapping(value = "/kitchens", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -34,7 +34,7 @@ public class KitchenController {
 
 	@Autowired
 	private KitchenServiceRegistration kitchenService;
-	
+
 	@Autowired
 	private MergeObjects merge;
 
@@ -48,12 +48,12 @@ public class KitchenController {
 		Optional<Kitchen> kitchen = kitchenRepository.findById(kitchensId);
 		return kitchen.isPresent() ? ResponseEntity.ok(kitchen.get()) : ResponseEntity.notFound().build();
 	}
-	
+
 	@PostMapping
 	public ResponseEntity<Kitchen> add(@RequestBody Kitchen kitchen) {
 		return ResponseEntity.status(HttpStatus.CREATED).body(kitchenService.save(kitchen));
 	}
-	
+
 	@PutMapping("/{kitchensId}")
 	public ResponseEntity<Kitchen> update(@PathVariable Long kitchensId, @RequestBody Kitchen kitchen) {
 		Optional<Kitchen> currentKitchen = kitchenRepository.findById(kitchensId);
@@ -66,29 +66,29 @@ public class KitchenController {
 
 		return ResponseEntity.notFound().build();
 	}
-	
+
 	@PatchMapping("/{kitchensId}")
-	public ResponseEntity<Kitchen> partialUpdate(@PathVariable Long kitchensId, @RequestBody Kitchen kitchen){
+	public ResponseEntity<Kitchen> partialUpdate(@PathVariable Long kitchensId, @RequestBody Kitchen kitchen) {
 		Optional<Kitchen> currentKitchen = kitchenRepository.findById(kitchensId);
-		
-		if(currentKitchen.isPresent()) {
+
+		if (currentKitchen.isPresent()) {
 			merge.objects(kitchen, currentKitchen.get());
 			Kitchen mergeKitchen = kitchenService.save(currentKitchen.get());
 			return ResponseEntity.ok(mergeKitchen);
 		}
-		
+
 		return ResponseEntity.notFound().build();
 	}
-	
+
 	@DeleteMapping("/{kitchensId}")
 	public ResponseEntity<?> delete(@PathVariable Long kitchensId) {
 		try {
 			kitchenService.remove(kitchensId);
 			return ResponseEntity.noContent().build();
-			
+
 		} catch (EntityNotFound e) {
 			return ResponseEntity.notFound().build();
-		
+
 		} catch (EntityExceptionInUse e) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
 		}

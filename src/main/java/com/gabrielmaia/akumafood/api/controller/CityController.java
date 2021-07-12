@@ -20,80 +20,80 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.gabrielmaia.akumafood.domain.exception.EntityExceptionInUse;
 import com.gabrielmaia.akumafood.domain.exception.EntityNotFound;
+import com.gabrielmaia.akumafood.domain.functions.MergeObjects;
 import com.gabrielmaia.akumafood.domain.model.City;
 import com.gabrielmaia.akumafood.domain.repository.CityRepository;
 import com.gabrielmaia.akumafood.domain.service.CityServiceRegistration;
-import com.gabrielmaia.akumafood.infrastructure.repository.MergeObjects;
 
 @RestController
 @RequestMapping(value = "/cities", produces = MediaType.APPLICATION_JSON_VALUE)
 public class CityController {
-	
+
 	@Autowired
 	private CityRepository cityRepository;
-	
+
 	@Autowired
 	private CityServiceRegistration cityService;
-	
+
 	@Autowired
 	private MergeObjects merge;
-	
+
 	@GetMapping
-	public List<City> all(){
+	public List<City> all() {
 		return cityRepository.findAll();
 	}
-	
+
 	@GetMapping("/{citiesId}")
 	public ResponseEntity<City> search(@PathVariable Long citiesId) {
 		Optional<City> city = cityRepository.findById(citiesId);
 		return city.isPresent() ? ResponseEntity.ok(city.get()) : ResponseEntity.notFound().build();
 	}
-	
+
 	@PostMapping
-	public ResponseEntity<?> add(@RequestBody City city){
+	public ResponseEntity<?> add(@RequestBody City city) {
 		try {
-			city = cityService.save(city); 
+			city = cityService.save(city);
 			return ResponseEntity.status(HttpStatus.CREATED).body(city);
 		} catch (EntityNotFound e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}
 	}
-	 
+
 	@PutMapping("/{citiesId}")
-	public ResponseEntity<City> update(@PathVariable Long citiesId, @RequestBody City city){
+	public ResponseEntity<City> update(@PathVariable Long citiesId, @RequestBody City city) {
 		Optional<City> currentCity = cityRepository.findById(citiesId);
-		
+
 		if (currentCity.isPresent()) {
 			BeanUtils.copyProperties(city, currentCity.get(), "id");
 			City updateCity = cityService.save(currentCity.get());
 			return ResponseEntity.ok(updateCity);
 		}
-		
+
 		return ResponseEntity.notFound().build();
 	}
-	
+
 	@PatchMapping("/{citiesId}")
-	public ResponseEntity<City> partialUpdate(@PathVariable Long citiesId, @RequestBody City city){
+	public ResponseEntity<City> partialUpdate(@PathVariable Long citiesId, @RequestBody City city) {
 		Optional<City> currentCity = cityRepository.findById(citiesId);
-		
-		if(currentCity.isPresent()) {
+
+		if (currentCity.isPresent()) {
 			merge.objects(city, currentCity.get());
 			City mergeCity = cityService.save(currentCity.get());
 			return ResponseEntity.ok(mergeCity);
 		}
-		
+
 		return ResponseEntity.notFound().build();
 	}
-	
+
 	@DeleteMapping("/{citiesId}")
 	public ResponseEntity<?> remove(@PathVariable Long citiesId) {
 		try {
 			cityService.remove(citiesId);
 			return ResponseEntity.noContent().build();
-			
+
 		} catch (EntityNotFound e) {
 			return ResponseEntity.notFound().build();
-			
+
 		} catch (EntityExceptionInUse e) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
 		}

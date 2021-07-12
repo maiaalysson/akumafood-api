@@ -19,10 +19,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gabrielmaia.akumafood.domain.exception.EntityNotFound;
+import com.gabrielmaia.akumafood.domain.functions.MergeObjects;
 import com.gabrielmaia.akumafood.domain.model.Restaurant;
 import com.gabrielmaia.akumafood.domain.repository.RestaurantRepository;
 import com.gabrielmaia.akumafood.domain.service.RestaurantServiceRegistration;
-import com.gabrielmaia.akumafood.infrastructure.repository.MergeObjects;
 
 @RestController
 @RequestMapping(value = "/restaurants", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -76,7 +76,8 @@ public class RestaurantController {
 	}
 
 	@PatchMapping("/{restaurantsId}")
-	public ResponseEntity<Restaurant> partialUpdate(@PathVariable Long restaurantsId, @RequestBody Restaurant restaurant) {
+	public ResponseEntity<Restaurant> partialUpdate(@PathVariable Long restaurantsId,
+			@RequestBody Restaurant restaurant) {
 		Optional<Restaurant> currentRestaurant = restaurantRepository.findById(restaurantsId);
 
 		if (currentRestaurant.isPresent()) {
@@ -93,7 +94,7 @@ public class RestaurantController {
 		try {
 			restaurantService.remove(restaurantsId);
 			return ResponseEntity.noContent().build();
-			
+
 		} catch (EntityNotFound e) {
 			return ResponseEntity.notFound().build();
 		}
