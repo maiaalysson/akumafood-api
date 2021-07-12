@@ -1,6 +1,7 @@
 package com.gabrielmaia.akumafood.api.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,13 +39,13 @@ public class RestaurantController {
 
 	@GetMapping
 	public List<Restaurant> all() {
-		return restaurantRepository.all();
+		return restaurantRepository.findAll();
 	}
 
 	@GetMapping("/{restaurantsId}")
 	public ResponseEntity<Restaurant> search(@PathVariable Long restaurantsId) {
-		Restaurant restaurant = restaurantRepository.search(restaurantsId);
-		return restaurant != null ? ResponseEntity.ok(restaurant) : ResponseEntity.notFound().build();
+		Optional<Restaurant> restaurant = restaurantRepository.findById(restaurantsId);
+		return restaurant.isPresent() ? ResponseEntity.ok(restaurant.get()) : ResponseEntity.notFound().build();
 	}
 
 	@PostMapping
@@ -60,12 +61,12 @@ public class RestaurantController {
 	@PutMapping("/{restaurantsId}")
 	public ResponseEntity<?> update(@PathVariable Long restaurantsId, @RequestBody Restaurant restaurant) {
 		try {
-			Restaurant restaurantUp = restaurantRepository.search(restaurantsId);
+			Optional<Restaurant> currentRestaurant = restaurantRepository.findById(restaurantsId);
 
-			if (restaurantUp != null) {
-				BeanUtils.copyProperties(restaurant, restaurantUp, "id");
-				restaurantUp = restaurantService.save(restaurantUp);
-				return ResponseEntity.ok(restaurantUp);
+			if (currentRestaurant.isPresent()) {
+				BeanUtils.copyProperties(restaurant, currentRestaurant.get(), "id");
+				Restaurant updateRestaurant = restaurantService.save(currentRestaurant.get());
+				return ResponseEntity.ok(updateRestaurant);
 			}
 
 			return ResponseEntity.notFound().build();
@@ -76,12 +77,12 @@ public class RestaurantController {
 
 	@PatchMapping("/{restaurantsId}")
 	public ResponseEntity<Restaurant> partialUpdate(@PathVariable Long restaurantsId, @RequestBody Restaurant restaurant) {
-		Restaurant newRestaurant = restaurantRepository.search(restaurantsId);
+		Optional<Restaurant> currentRestaurant = restaurantRepository.findById(restaurantsId);
 
-		if (newRestaurant != null) {
-			merge.objects(restaurant, newRestaurant);
-			newRestaurant = restaurantService.save(newRestaurant);
-			return ResponseEntity.ok(newRestaurant);
+		if (currentRestaurant.isPresent()) {
+			merge.objects(restaurant, currentRestaurant.get());
+			Restaurant mergeRestaurant = restaurantService.save(currentRestaurant.get());
+			return ResponseEntity.ok(mergeRestaurant);
 		}
 
 		return ResponseEntity.notFound().build();

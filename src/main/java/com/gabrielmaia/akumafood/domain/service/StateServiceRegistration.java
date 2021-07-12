@@ -11,24 +11,24 @@ import com.gabrielmaia.akumafood.domain.repository.StateRepository;
 
 @Service
 public class StateServiceRegistration {
-	
+
 	@Autowired
 	private StateRepository stateRepository;
-	
+
 	public State save(State state) {
 		return stateRepository.save(state);
 	}
-	
+
 	public void remove(Long id) {
 		try {
-			stateRepository.remove(id);
-			
+			stateRepository.deleteById(id);
+
 		} catch (EmptyResultDataAccessException e) {
 			throw new EntityNotFound(String.format("This state code: %d, does not exist.", id));
-		
+
 		} catch (EntityExceptionInUse e) {
-			throw new EntityExceptionInUse(String.format("The state of the code: %d, "
-					+ "of cannot be removed because it is in use", id));
+			throw new EntityExceptionInUse(
+					String.format("The state of the code: %d, " + "of cannot be removed because it is in use", id));
 		}
 	}
 }

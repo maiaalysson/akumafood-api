@@ -1,6 +1,7 @@
 package com.gabrielmaia.akumafood.api.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,13 +40,13 @@ public class CityController {
 	
 	@GetMapping
 	public List<City> all(){
-		return cityRepository.all();
+		return cityRepository.findAll();
 	}
 	
 	@GetMapping("/{citiesId}")
 	public ResponseEntity<City> search(@PathVariable Long citiesId) {
-		City city = cityRepository.search(citiesId);
-		return city != null ? ResponseEntity.ok(city) : ResponseEntity.notFound().build();
+		Optional<City> city = cityRepository.findById(citiesId);
+		return city.isPresent() ? ResponseEntity.ok(city.get()) : ResponseEntity.notFound().build();
 	}
 	
 	@PostMapping
@@ -60,12 +61,12 @@ public class CityController {
 	 
 	@PutMapping("/{citiesId}")
 	public ResponseEntity<City> update(@PathVariable Long citiesId, @RequestBody City city){
-		City newCity = cityRepository.search(citiesId);
+		Optional<City> currentCity = cityRepository.findById(citiesId);
 		
-		if (newCity != null) {
-			BeanUtils.copyProperties(city, newCity, "id");
-			newCity = cityService.save(newCity);
-			return ResponseEntity.ok(newCity);
+		if (currentCity.isPresent()) {
+			BeanUtils.copyProperties(city, currentCity.get(), "id");
+			City updateCity = cityService.save(currentCity.get());
+			return ResponseEntity.ok(updateCity);
 		}
 		
 		return ResponseEntity.notFound().build();
@@ -73,12 +74,12 @@ public class CityController {
 	
 	@PatchMapping("/{citiesId}")
 	public ResponseEntity<City> partialUpdate(@PathVariable Long citiesId, @RequestBody City city){
-		City newCity = cityRepository.search(citiesId);
+		Optional<City> currentCity = cityRepository.findById(citiesId);
 		
-		if(newCity != null) {
-			merge.objects(city, newCity);
-			newCity = cityService.save(newCity);
-			return ResponseEntity.ok(newCity);
+		if(currentCity.isPresent()) {
+			merge.objects(city, currentCity.get());
+			City mergeCity = cityService.save(currentCity.get());
+			return ResponseEntity.ok(mergeCity);
 		}
 		
 		return ResponseEntity.notFound().build();

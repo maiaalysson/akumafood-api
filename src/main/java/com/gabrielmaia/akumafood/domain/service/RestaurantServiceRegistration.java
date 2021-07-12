@@ -22,10 +22,8 @@ public class RestaurantServiceRegistration {
 	public Restaurant save(Restaurant restaurant) {
 		if (restaurant.getKitchen() != null) {
 			Long kitchenId = restaurant.getKitchen().getId();
-			Kitchen kitchen = kitchenRepository.search(kitchenId);
-
-			if (kitchen == null)
-				throw new EntityNotFound(String.format("Kitchen:%d not found!", kitchenId));
+			Kitchen kitchen = kitchenRepository.findById(kitchenId)
+					.orElseThrow(() -> new EntityNotFound(String.format("Kitchen:%d not found!", kitchenId)));
 
 			restaurant.setKitchen(kitchen);
 		}
@@ -35,7 +33,7 @@ public class RestaurantServiceRegistration {
 
 	public void remove(Long id) {
 		try {
-			restaurantRepository.remove(id);
+			restaurantRepository.deleteById(id);
 			
 		} catch (EmptyResultDataAccessException e) {
 			throw new EntityNotFound(String.format("There is no code Restaurant with this ID: %d", id));

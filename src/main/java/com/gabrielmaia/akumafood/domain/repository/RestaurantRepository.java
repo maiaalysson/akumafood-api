@@ -1,14 +1,9 @@
 package com.gabrielmaia.akumafood.domain.repository;
 
-import java.util.List;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import com.gabrielmaia.akumafood.domain.model.Restaurant;
 
-public interface RestaurantRepository {
-	
-	List<Restaurant> all();
-	Restaurant search(Long id);
-	Restaurant save(Restaurant restaurant);
-	void remove(Long id);
-	
-}
+@Repository
+public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {}
