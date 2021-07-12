@@ -1,6 +1,7 @@
 package com.gabrielmaia.akumafood.api.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,13 +40,13 @@ public class KitchenController {
 
 	@GetMapping
 	public List<Kitchen> all() {
-		return kitchenRepository.all();
+		return kitchenRepository.findAll();
 	}
 
 	@GetMapping("/{kitchensId}")
 	public ResponseEntity<Kitchen> search(@PathVariable Long kitchensId) {
-		Kitchen kitchen = kitchenRepository.search(kitchensId);
-		return kitchen != null ? ResponseEntity.ok(kitchen) : ResponseEntity.notFound().build();
+		Optional<Kitchen> kitchen = kitchenRepository.findById(kitchensId);
+		return kitchen.isPresent() ? ResponseEntity.ok(kitchen.get()) : ResponseEntity.notFound().build();
 	}
 	
 	@PostMapping
@@ -55,12 +56,12 @@ public class KitchenController {
 	
 	@PutMapping("/{kitchensId}")
 	public ResponseEntity<Kitchen> update(@PathVariable Long kitchensId, @RequestBody Kitchen kitchen) {
-		Kitchen currentKitchen = kitchenRepository.search(kitchensId);
+		Optional<Kitchen> currentKitchen = kitchenRepository.findById(kitchensId);
 
-		if (currentKitchen != null) {
-			BeanUtils.copyProperties(kitchen, currentKitchen, "id");
-			currentKitchen = kitchenRepository.save(currentKitchen);
-			return ResponseEntity.ok(currentKitchen);
+		if (currentKitchen.isPresent()) {
+			BeanUtils.copyProperties(kitchen, currentKitchen.get(), "id");
+			Kitchen updateKitchen = kitchenService.save(currentKitchen.get());
+			return ResponseEntity.ok(updateKitchen);
 		}
 
 		return ResponseEntity.notFound().build();
@@ -68,12 +69,12 @@ public class KitchenController {
 	
 	@PatchMapping("/{kitchensId}")
 	public ResponseEntity<Kitchen> partialUpdate(@PathVariable Long kitchensId, @RequestBody Kitchen kitchen){
-		Kitchen newKitchen = kitchenRepository.search(kitchensId);
+		Optional<Kitchen> currentKitchen = kitchenRepository.findById(kitchensId);
 		
-		if(newKitchen != null) {
-			merge.objects(kitchen, newKitchen);
-			newKitchen = kitchenService.save(newKitchen);
-			return ResponseEntity.ok(newKitchen);
+		if(currentKitchen.isPresent()) {
+			merge.objects(kitchen, currentKitchen.get());
+			Kitchen mergeKitchen = kitchenService.save(currentKitchen.get());
+			return ResponseEntity.ok(mergeKitchen);
 		}
 		
 		return ResponseEntity.notFound().build();

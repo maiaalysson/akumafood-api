@@ -1,6 +1,7 @@
 package com.gabrielmaia.akumafood.api.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,17 +40,13 @@ public class StateController {
 	
 	@GetMapping
 	public List<State> all(){
-		return stateRepository.all();
+		return stateRepository.findAll();
 	}
 	
 	@GetMapping("/{statesId}")
 	public ResponseEntity<State> search(@PathVariable Long statesId){
-		State state = stateRepository.search(statesId);
-		
-		if (state != null)
-			return ResponseEntity.ok(state);
-		
-		return ResponseEntity.notFound().build();
+		Optional<State> state = stateRepository.findById(statesId);
+		return state.isPresent() ? ResponseEntity.ok(state.get()) : ResponseEntity.notFound().build();
 	}
 	
 	@PostMapping
@@ -59,12 +56,12 @@ public class StateController {
 	
 	@PutMapping("/{statesId}")
 	public ResponseEntity<State> update(@PathVariable Long statesId, @RequestBody State state){
-		State newState = stateRepository.search(statesId);
+		Optional<State> currentState = stateRepository.findById(statesId);
 		
-		if (newState != null) {
-			BeanUtils.copyProperties(state, newState, "id");
-			newState = stateService.save(newState);
-			return ResponseEntity.ok(newState);
+		if (currentState.isPresent()) {
+			BeanUtils.copyProperties(state, currentState, "id");
+			State updateState = stateService.save(currentState.get());
+			return ResponseEntity.ok(updateState);
 		}
 		
 		return ResponseEntity.notFound().build();
@@ -72,12 +69,12 @@ public class StateController {
 	
 	@PatchMapping("/{statesId}")
 	public ResponseEntity<State> partialUpdate(@PathVariable Long statesId, @RequestBody State state){
-		State newState = stateRepository.search(statesId);
+		Optional<State> currentState = stateRepository.findById(statesId);
 		
-		if(newState != null) {
-			merge.objects(state, newState);
-			newState = stateService.save(newState);
-			return ResponseEntity.ok(newState);
+		if(currentState.isPresent()) {
+			merge.objects(state, currentState.get());
+			State mergeState = stateService.save(currentState.get());
+			return ResponseEntity.ok(mergeState);
 		}
 		
 		return ResponseEntity.notFound().build();

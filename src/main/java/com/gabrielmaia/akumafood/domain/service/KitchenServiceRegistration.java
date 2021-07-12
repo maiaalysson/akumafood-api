@@ -22,7 +22,7 @@ public class KitchenServiceRegistration {
 	
 	public void remove(Long id) {
 		try {
-			kitchenRepository.remove(id);
+			kitchenRepository.deleteById(id);
 			
 		} catch (EmptyResultDataAccessException e) {
 			throw new EntityNotFound(String.format("There is no code kitchen with this ID: %d", id));
