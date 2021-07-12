@@ -27,16 +27,16 @@ public class RestaurantServiceRegistration {
 
 			restaurant.setKitchen(kitchen);
 		}
-		
+
 		return restaurantRepository.save(restaurant);
 	}
 
 	public void remove(Long id) {
 		try {
 			restaurantRepository.deleteById(id);
-			
+
 		} catch (EmptyResultDataAccessException e) {
 			throw new EntityNotFound(String.format("There is no code Restaurant with this ID: %d", id));
-		} 
+		}
 	}
 }

@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 import com.gabrielmaia.akumafood.domain.model.State;
 
 @Repository
-public interface StateRepository extends JpaRepository<State, Long> {}
+public interface StateRepository extends JpaRepository<State, Long> {
+}

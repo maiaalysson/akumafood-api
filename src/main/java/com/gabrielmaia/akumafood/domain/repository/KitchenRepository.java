@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 import com.gabrielmaia.akumafood.domain.model.Kitchen;
 
 @Repository
-public interface KitchenRepository extends JpaRepository<Kitchen, Long> {}
+public interface KitchenRepository extends JpaRepository<Kitchen, Long> {
+}

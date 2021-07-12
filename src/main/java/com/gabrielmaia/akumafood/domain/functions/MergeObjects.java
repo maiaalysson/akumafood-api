@@ -1,4 +1,4 @@
-package com.gabrielmaia.akumafood.infrastructure.repository;
+package com.gabrielmaia.akumafood.domain.functions;
 
 import java.lang.reflect.Field;
 

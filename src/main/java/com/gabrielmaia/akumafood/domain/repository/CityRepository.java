@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 import com.gabrielmaia.akumafood.domain.model.City;
 
 @Repository
-public interface CityRepository extends JpaRepository<City, Long> {}
+public interface CityRepository extends JpaRepository<City, Long> {
+}

@@ -23,9 +23,8 @@ public class CityServiceRegistration {
 	public City save(City city) {
 		if (city.getState() != null) {
 			Long stateId = city.getState().getId();
-			State state = stateRepository.findById(stateId)
-					.orElseThrow(() -> new EntityNotFound(
-							String.format("This state code: %d, does not exist.", stateId)));
+			State state = stateRepository.findById(stateId).orElseThrow(
+					() -> new EntityNotFound(String.format("This state code: %d, does not exist.", stateId)));
 
 			city.setState(state);
 		}
