@@ -11,7 +11,8 @@ import org.springframework.stereotype.Repository;
 import com.gabrielmaia.akumafood.domain.model.Restaurant;
 
 @Repository
-public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
+public interface RestaurantRepository 
+		extends JpaRepository<Restaurant, Long>, RestaurantRepositoryCustomized {
 
 	// @Query("from Restaurant where name like %:received% and kitchen.id = :id")
 	List<Restaurant> searchForName(@Param("received") String name, @Param("id") Long kitchen);
